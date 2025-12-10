@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo de Planilha - Sistema de Vigilantes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .info-box h3 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+        }
+        
+        .info-box li {
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .warning-box h3 {
+            color: #f59e0b;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+            overflow-x: auto;
+            display: block;
+        }
+        
+        thead {
+            background: #10b981;
+            color: white;
+        }
+        
+        th {
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+        }
+        
+        tbody tr:nth-child(odd) {
+            background: #f9f9f9;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: white;
+        }
+        
+        tbody tr:hover {
+            background: #e8f5e9;
+        }
+        
+        .example-row {
+            background: #fff9c4 !important;
+        }
+        
+        .instruction-row {
+            background: #e3f2fd !important;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 10px;
+            display: inline-block;
+        }
+        
+        .status-em-servico {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-livre {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .status-ferias {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .legend-item {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #10b981;
+        }
+        
+        .legend-item strong {
+            color: #10b981;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+        
+        .download-btn {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 20px 0;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .download-btn:hover {
+            background: #059669;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 10px;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Exemplo de Planilha de Importação</h1>
+        <p class="subtitle">Sistema de Gestão de Vigilantes - Modelo de Importação CSV</p>
+        
+        <div class="info-box">
+            <h3>✅ Como usar esta planilha:</h3>
+            <ul>
+                <li>Baixe o modelo CSV pelo sistema (botão Exportar → Baixar Modelo)</li>
+                <li>Abra no Excel ou Google Sheets</li>
+                <li>Delete as linhas de instrução e exemplo</li>
+                <li>Preencha com seus dados reais</li>
+                <li>Salve como CSV</li>
+                <li>Importe no sistema</li>
+            </ul>
+        </div>
+        
+        <div class="warning-box">
+            <h3>⚠️ IMPORTANTE:</h3>
+            <ul>
+                <li><strong>Não altere os nomes das colunas!</strong></li>
+                <li>Use o formato de data: <span class="code">AAAA-MM-DD</span></li>
+                <li>Status deve ser exatamente como mostrado (com MAIÚSCULAS e _)</li>
+                <li>Separe itens de checklist com ponto e vírgula <span class="code">;</span></li>
+            </ul>
+        </div>
+        
+        <h2 style="margin: 30px 0 15px 0;">Visualização da Planilha</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Matricula</th>
+                    <th>Nome_Completo</th>
+                    <th>Funcao</th>
+                    <th>Data_Admissao</th>
+                    <th>Status</th>
+                    <th>Observacoes</th>
+                    <th>Checklist_Nome_1</th>
+                    <th>Checklist_Itens_1</th>
+                    <th>Checklist_Nome_2</th>
+                    <th>Checklist_Itens_2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="instruction-row">
+                    <td>NÚMERO</td>
+                    <td>TEXTO COMPLETO</td>
+                    <td>Vigilante/Supervisor/Líder</td>
+                    <td>AAAA-MM-DD</td>
+                    <td>EM_SERVICO/LIVRE/FERIAS/AFASTADO/DEMITIDO/EM_ADMISSAO</td>
+                    <td>Texto livre</td>
+                    <td>Nome do checklist</td>
+                    <td>Item 1; Item 2; Item 3</td>
+                    <td>(opcional)</td>
+                    <td>(opcional)</td>
+                </tr>
+                <tr class="example-row">
+                    <td><strong>12345</strong></td>
+                    <td>João Silva Santos</td>
+                    <td>Vigilante</td>
+                    <td>2024-01-15</td>
+                    <td><span class="status-badge status-em-servico">EM_SERVICO</span></td>
+                    <td>Vigilante experiente, possui CNH categoria D</td>
+                    <td>Treinamentos</td>
+                    <td>NR-10 Básico; Primeiros Socorros; Combate a Incêndio</td>
+                    <td>Documentos</td>
+                    <td>CNH Atualizada; Certificado; Atestado Médico</td>
+                </tr>
+                <tr>
+                    <td><strong>67890</strong></td>
+                    <td>Maria Santos Oliveira</td>
+                    <td>Supervisor</td>
+                    <td>2023-06-20</td>
+                    <td><span class="status-badge status-em-servico">EM_SERVICO</span></td>
+                    <td>Supervisora com 8 anos de experiência</td>
+                    <td>Certificações</td>
+                    <td>Supervisor de Segurança; Gestão de Equipes</td>
+                    <td>Treinamentos</td>
+                    <td>Liderança; Comunicação; Gestão de Conflitos</td>
+                </tr>
+                <tr>
+                    <td><strong>11223</strong></td>
+                    <td>Pedro Souza Lima</td>
+                    <td>Vigilante</td>
+                    <td>2024-03-10</td>
+                    <td><span class="status-badge status-ferias">FERIAS</span></td>
+                    <td>Férias programadas até 20/12/2024</td>
+                    <td>Documentos</td>
+                    <td>CNH B; RG; CPF; Certificado Vigilante</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><strong>44556</strong></td>
+                    <td>Ana Costa Ferreira</td>
+                    <td>Vigilante</td>
+                    <td>2023-11-05</td>
+                    <td><span class="status-badge status-livre">LIVRE</span></td>
+                    <td>Disponível para escalas noturnas</td>
+                    <td>Treinamentos</td>
+                    <td>NR-10; Combate a Incêndio; Primeiros Socorros</td>
+                    <td>Equipamentos</td>
+                    <td>Rádio; Colete; Lanterna; Apito</td>
+                </tr>
+                <tr>
+                    <td><strong>78901</strong></td>
+                    <td>Carlos Mendes Rocha</td>
+                    <td>Líder de Equipe</td>
+                    <td>2022-08-15</td>
+                    <td><span class="status-badge status-em-servico">EM_SERVICO</span></td>
+                    <td>Líder do turno da manhã, responsável por 15 vigilantes</td>
+                    <td>Liderança</td>
+                    <td>Gestão de Equipes; Resolução de Conflitos</td>
+                    <td>Treinamentos</td>
+                    <td>NR-10; Primeiros Socorros; Gestão de Pessoas</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="legend">
+            <h3>📖 Legenda dos Campos</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <strong>Matricula</strong>
+                    Número único de identificação do vigilante. Pode ser numérico ou alfanumérico.
+                </div>
+                <div class="legend-item">
+                    <strong>Nome_Completo</strong>
+                    Nome completo do vigilante sem abreviações.
+                </div>
+                <div class="legend-item">
+                    <strong>Funcao</strong>
+                    Cargo ou função exercida: Vigilante, Supervisor, Líder de Equipe, etc.
+                </div>
+                <div class="legend-item">
+                    <strong>Data_Admissao</strong>
+                    Data de contratação no formato AAAA-MM-DD (ex: 2024-12-06).
+                </div>
+                <div class="legend-item">
+                    <strong>Status</strong>
+                    Situação atual: EM_SERVICO, LIVRE, FERIAS, AFASTADO, DEMITIDO, EM_ADMISSAO.
+                </div>
+                <div class="legend-item">
+                    <strong>Observacoes</strong>
+                    Campo livre para anotações, observações e informações adicionais.
+                </div>
+                <div class="legend-item">
+                    <strong>Checklist_Nome_X</strong>
+                    Nome do checklist (Treinamentos, Documentos, Equipamentos, etc).
+                </div>
+                <div class="legend-item">
+                    <strong>Checklist_Itens_X</strong>
+                    Itens do checklist separados por ponto e vírgula (;).
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #e8f5e9; border-radius: 8px;">
+            <h3 style="color: #10b981; margin-bottom: 15px;">🎯 Próximos Passos</h3>
+            <ol style="margin-left: 20px; line-height: 1.8;">
+                <li>Acesse o sistema de vigilantes</li>
+                <li>Clique no botão <strong>"Exportar"</strong> no cabeçalho</li>
+                <li>Clique em <strong>"Baixar Modelo CSV"</strong></li>
+                <li>Abra o arquivo no Excel ou Google Sheets</li>
+                <li>Preencha com seus dados (delete as linhas de exemplo)</li>
+                <li>Salve como CSV</li>
+                <li>Importe no sistema</li>
+                <li>✅ Pronto! Seus vigilantes estarão no sistema</li>
+            </ol>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+            <h3 style="color: #333; margin-bottom: 15px;">📚 Documentação Completa</h3>
+            <p style="color: #666; margin-bottom: 15px;">
+                Para instruções detalhadas, exemplos e solução de problemas,<br>
+                consulte o arquivo <strong>GUIA_IMPORTACAO.md</strong>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

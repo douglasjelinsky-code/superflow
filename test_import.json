@@ -1,0 +1,41 @@
+{
+  "board": {
+    "name": "Board de Teste",
+    "description": "Teste de importação de listas",
+    "exportDate": "2025-12-08T15:00:00.000Z"
+  },
+  "lists": [
+    {
+      "id": "list-1",
+      "name": "Lista A",
+      "position": 1
+    },
+    {
+      "id": "list-2",
+      "name": "Lista B",
+      "position": 2
+    }
+  ],
+  "vigilantes": [
+    {
+      "matricula": "V001",
+      "nome": "Vigilante Um",
+      "funcao": "Vigilante",
+      "dataAdmissao": "2024-01-01",
+      "status": "EM_SERVICO",
+      "lista": "Lista A",
+      "observacoes": "Observação 1",
+      "checklists": []
+    },
+    {
+      "matricula": "V002",
+      "nome": "Vigilante Dois",
+      "funcao": "Vigilante",
+      "dataAdmissao": "2024-02-01",
+      "status": "LIVRE",
+      "lista": "Lista B",
+      "observacoes": "Observação 2",
+      "checklists": []
+    }
+  ]
+}

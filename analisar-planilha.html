@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise da Planilha Excel</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #0a0f1e;
+            color: #e5e7eb;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #1a1f35;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #10b981;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn i {
+            font-size: 16px;
+        }
+
+        .info {
+            background: #0f1729;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #10b981;
+        }
+
+        .info h2 {
+            color: #10b981;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .info p {
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info strong {
+            color: #10b981;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #0f1729;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #2d3748;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            color: #10b981;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e5e7eb;
+        }
+
+        .sheets {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sheet-tab {
+            padding: 12px 24px;
+            background: #0f1729;
+            border: 2px solid #2d3748;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .sheet-tab:hover {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .sheet-tab.active {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 2px solid #2d3748;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f1729;
+        }
+
+        thead {
+            background: #10b981;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            border: 1px solid #059669;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 12px;
+            border: 1px solid #2d3748;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #1a1f35;
+        }
+
+        .column-info {
+            background: #0f1729;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .column-info h3 {
+            color: #10b981;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .column-item {
+            background: #1a1f35;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+
+        .column-item strong {
+            color: #10b981;
+            font-size: 16px;
+        }
+
+        .column-item .details {
+            margin-top: 8px;
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .export-info {
+            background: #0f1729;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #10b981;
+            margin-bottom: 20px;
+        }
+
+        .export-info h3 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+
+        .export-info textarea {
+            width: 100%;
+            min-height: 400px;
+            background: #1a1f35;
+            color: #e5e7eb;
+            border: 2px solid #2d3748;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .alert {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #fbbf24;
+        }
+
+        .alert strong {
+            color: #78350f;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Análise Detalhada da Planilha Excel</h1>
+        
+        <div class="alert">
+            <strong>📋 Importante:</strong> Esta análise vai ajudar a adaptar o sistema SUPER FLOW para sua planilha. 
+            Clique em "Copiar Análise Completa" e me envie o texto para eu adaptar o código de importação/exportação.
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn" onclick="copyAnalysis()">
+                <i class="fas fa-copy"></i>
+                Copiar Análise Completa
+            </button>
+            <button class="btn" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                Imprimir
+            </button>
+        </div>
+
+        <div class="info" id="fileInfo">
+            <h2>📁 Informações do Arquivo</h2>
+            <p>Carregando...</p>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="sheets" id="sheetsContainer"></div>
+
+        <div class="table-container" id="tableContainer">
+            <p style="padding: 20px; text-align: center; color: #94a3b8;">Selecione uma aba acima para visualizar os dados</p>
+        </div>
+
+        <div class="column-info" id="columnInfo"></div>
+
+        <div class="export-info">
+            <h3>📋 Análise Completa (Copie e envie para o desenvolvedor)</h3>
+            <textarea id="analysisText" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        let workbookData = null;
+        let analysisData = {};
+
+        async function loadExcel() {
+            try {
+                const response = await fetch('planilha_modelo.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+                workbookData = workbook;
+                const sheetNames = workbook.SheetNames;
+
+                // Análise completa
+                analysisData = {
+                    arquivo: 'DIEGO.xlsx',
+                    totalAbas: sheetNames.length,
+                    abas: [],
+                    totalLinhas: 0,
+                    maxColunas: 0
+                };
+
+                // Processar cada aba
+                sheetNames.forEach(sheetName => {
+                    const sheet = workbook.Sheets[sheetName];
+                    const data = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+                    const columns = data.length > 0 ? Object.keys(data[0]) : [];
+                    
+                    analysisData.totalLinhas += data.length;
+                    analysisData.maxColunas = Math.max(analysisData.maxColunas, columns.length);
+
+                    const sheetInfo = {
+                        nome: sheetName,
+                        linhas: data.length,
+                        colunas: columns.length,
+                        nomeColunas: columns,
+                        exemplos: {}
+                    };
+
+                    // Coletar exemplos e tipos
+                    columns.forEach(col => {
+                        const valores = data.slice(0, 5).map(row => row[col]).filter(v => v !== '' && v !== null && v !== undefined);
+                        const tipos = new Set(valores.map(v => typeof v));
+                        
+                        sheetInfo.exemplos[col] = {
+                            tipo: Array.from(tipos).join(', ') || 'vazio',
+                            exemplo: valores[0] || '(vazio)',
+                            totalPreenchidos: data.filter(row => row[col] && row[col] !== '').length
+                        };
+                    });
+
+                    analysisData.abas.push(sheetInfo);
+                });
+
+                // Exibir informações
+                displayFileInfo();
+                displayStats();
+                displaySheetTabs();
+                generateAnalysisText();
+
+                // Mostrar primeira aba
+                if (sheetNames.length > 0) {
+                    showSheet(sheetNames[0]);
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar Excel:', error);
+                document.getElementById('fileInfo').innerHTML = `
+                    <h2>❌ Erro</h2>
+                    <p style="color: #ef4444;"><strong>Erro ao carregar arquivo:</strong> ${error.message}</p>
+                    <p>Verifique se o arquivo planilha_modelo.xlsx está na mesma pasta.</p>
+                `;
+            }
+        }
+
+        function displayFileInfo() {
+            const info = analysisData;
+            document.getElementById('fileInfo').innerHTML = `
+                <h2>📁 Informações do Arquivo</h2>
+                <p><strong>Arquivo:</strong> ${info.arquivo}</p>
+                <p><strong>Total de Abas:</strong> ${info.totalAbas}</p>
+                <p><strong>Abas:</strong> ${info.abas.map(a => a.nome).join(', ')}</p>
+                <p><strong>Total de Linhas (todas as abas):</strong> ${info.totalLinhas}</p>
+                <p><strong>Máximo de Colunas:</strong> ${info.maxColunas}</p>
+            `;
+        }
+
+        function displayStats() {
+            const info = analysisData;
+            document.getElementById('stats').innerHTML = `
+                <div class="stat-card">
+                    <h4>Abas</h4>
+                    <div class="value">${info.totalAbas}</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Total de Linhas</h4>
+                    <div class="value">${info.totalLinhas}</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Máx. Colunas</h4>
+                    <div class="value">${info.maxColunas}</div>
+                </div>
+                ${info.abas.map(aba => `
+                    <div class="stat-card">
+                        <h4>${aba.nome}</h4>
+                        <div class="value">${aba.linhas}</div>
+                        <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">${aba.colunas} colunas</p>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function displaySheetTabs() {
+            const html = analysisData.abas.map((aba, index) => 
+                `<div class="sheet-tab ${index === 0 ? 'active' : ''}" onclick="showSheet('${aba.nome}')">
+                    ${aba.nome} (${aba.linhas} linhas)
+                </div>`
+            ).join('');
+            document.getElementById('sheetsContainer').innerHTML = html;
+        }
+
+        function showSheet(sheetName) {
+            const sheet = workbookData.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+            // Atualizar abas ativas
+            document.querySelectorAll('.sheet-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.textContent.startsWith(sheetName));
+            });
+
+            if (data.length === 0) {
+                document.getElementById('tableContainer').innerHTML = '<p style="padding: 20px; text-align: center; color: #94a3b8;">Esta aba está vazia</p>';
+                document.getElementById('columnInfo').innerHTML = '';
+                return;
+            }
+
+            // Criar tabela
+            const columns = Object.keys(data[0]);
+            let tableHtml = '<table><thead><tr>';
+            columns.forEach(col => {
+                tableHtml += `<th>${col}</th>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
+
+            // Mostrar até 100 linhas
+            data.slice(0, 100).forEach(row => {
+                tableHtml += '<tr>';
+                columns.forEach(col => {
+                    let value = row[col] || '';
+                    if (typeof value === 'string' && value.length > 100) {
+                        value = value.substring(0, 100) + '...';
+                    }
+                    tableHtml += `<td>${value}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+            
+            if (data.length > 100) {
+                tableHtml += `<p style="padding: 10px; text-align: center; color: #10b981;">Mostrando 100 de ${data.length} linhas</p>`;
+            }
+
+            document.getElementById('tableContainer').innerHTML = tableHtml;
+
+            // Informações das colunas
+            const abaInfo = analysisData.abas.find(a => a.nome === sheetName);
+            let columnInfoHtml = `
+                <h3>📋 Estrutura das Colunas da Aba "${sheetName}" (${columns.length} colunas)</h3>
+                <p style="color: #94a3b8; margin-bottom: 15px;">Total de linhas com dados: ${data.length}</p>
+            `;
+
+            columns.forEach((col, index) => {
+                const exemplo = abaInfo.exemplos[col];
+                columnInfoHtml += `
+                    <div class="column-item">
+                        <strong>${index + 1}. ${col}</strong>
+                        <div class="details">
+                            📊 Tipo: ${exemplo.tipo}<br>
+                            📝 Exemplo: ${exemplo.exemplo}<br>
+                            ✅ Linhas preenchidas: ${exemplo.totalPreenchidos} de ${data.length} (${Math.round(exemplo.totalPreenchidos / data.length * 100)}%)
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('columnInfo').innerHTML = columnInfoHtml;
+        }
+
+        function generateAnalysisText() {
+            let text = `═══════════════════════════════════════════════════════
+📊 ANÁLISE COMPLETA DA PLANILHA EXCEL
+═══════════════════════════════════════════════════════
+
+📁 ARQUIVO: ${analysisData.arquivo}
+📅 Data da Análise: ${new Date().toLocaleString('pt-BR')}
+
+═══════════════════════════════════════════════════════
+📋 RESUMO GERAL
+═══════════════════════════════════════════════════════
+
+Total de Abas: ${analysisData.totalAbas}
+Total de Linhas (todas as abas): ${analysisData.totalLinhas}
+Máximo de Colunas: ${analysisData.maxColunas}
+
+Abas disponíveis: ${analysisData.abas.map(a => a.nome).join(', ')}
+
+═══════════════════════════════════════════════════════
+📊 DETALHAMENTO DE CADA ABA
+═══════════════════════════════════════════════════════
+`;
+
+            analysisData.abas.forEach((aba, abaIndex) => {
+                text += `\n\n${'─'.repeat(60)}
+ABA ${abaIndex + 1}: ${aba.nome}
+${'─'.repeat(60)}
+
+Total de Linhas: ${aba.linhas}
+Total de Colunas: ${aba.colunas}
+
+COLUNAS:
+`;
+                aba.nomeColunas.forEach((col, colIndex) => {
+                    const exemplo = aba.exemplos[col];
+                    text += `
+${colIndex + 1}. ${col}
+   - Tipo: ${exemplo.tipo}
+   - Exemplo: ${exemplo.exemplo}
+   - Preenchimento: ${exemplo.totalPreenchidos}/${aba.linhas} (${Math.round(exemplo.totalPreenchidos / aba.linhas * 100)}%)
+`;
+                });
+            });
+
+            text += `
+
+═══════════════════════════════════════════════════════
+🔄 PRÓXIMO PASSO
+═══════════════════════════════════════════════════════
+
+Por favor, envie esta análise para o desenvolvedor junto com:
+
+1. Qual aba contém os dados principais dos vigilantes?
+2. Como mapear as colunas para o sistema?
+3. Quais são os possíveis valores de Status?
+4. Formato das datas (se houver)?
+
+═══════════════════════════════════════════════════════
+`;
+
+            document.getElementById('analysisText').value = text;
+        }
+
+        function copyAnalysis() {
+            const textarea = document.getElementById('analysisText');
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Feedback visual
+            const btn = event.target.closest('.btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            btn.style.background = '#059669';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '#10b981';
+            }, 2000);
+        }
+
+        // Carregar ao iniciar
+        loadExcel();
+    </script>
+</body>
+</html>

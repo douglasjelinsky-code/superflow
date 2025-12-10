@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Botões - SUPER FLOW</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0f1e;
+            color: #e5e7eb;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1f35;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #10b981;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #0f1729;
+            border-radius: 8px;
+            border: 2px solid #2d3748;
+        }
+
+        .test-section h2 {
+            color: #10b981;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-board-action {
+            width: 56px !important;
+            height: 56px !important;
+            border-radius: 8px;
+            background: #1a1f35;
+            border: 2px solid #2d3748;
+            color: #e5e7eb;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            font-size: 20px !important;
+            min-width: 56px !important;
+            min-height: 56px !important;
+        }
+
+        .btn-board-action:hover {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-board-action:active {
+            transform: translateY(0);
+        }
+
+        .btn-board-action.btn-danger {
+            color: #e5e7eb;
+        }
+
+        .btn-board-action.btn-danger:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0a0f1e;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+
+        .info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .status.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        #log {
+            margin-top: 30px;
+            padding: 20px;
+            background: #0a0f1e;
+            border-radius: 8px;
+            border: 2px solid #2d3748;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        #log .log-entry {
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #10b981;
+            background: #1a1f35;
+        }
+
+        #log .log-entry.click {
+            border-left-color: #3b82f6;
+        }
+
+        #log .log-entry.error {
+            border-left-color: #ef4444;
+        }
+
+        .mobile-test {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fef3c7;
+            color: #92400e;
+            border-radius: 6px;
+            border: 2px solid #fbbf24;
+        }
+
+        @media (max-width: 768px) {
+            .btn-board-action {
+                width: 48px !important;
+                height: 48px !important;
+                font-size: 18px !important;
+                min-width: 48px !important;
+                min-height: 48px !important;
+            }
+
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste dos Botões - SUPER FLOW</h1>
+
+        <div class="test-section">
+            <h2>1️⃣ Teste Desktop (56x56px)</h2>
+            <div class="button-group">
+                <button class="btn-board-action" id="testEditBtn" title="Botão Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-board-action btn-danger" id="testDeleteBtn" title="Botão Excluir">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <span>← Clique nos botões para testar</span>
+            </div>
+            <div class="info">
+                <p><strong>Tamanho Desktop:</strong> <span class="status success">56x56px</span></p>
+                <p><strong>Fonte:</strong> 20px</p>
+                <p><strong>Status:</strong> <span id="desktopStatus">Aguardando clique...</span></p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>2️⃣ Teste Mobile (48x48px)</h2>
+            <div class="mobile-test">
+                <p><strong>📱 Para testar no mobile:</strong></p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Pressione <code>F12</code> (DevTools)</li>
+                    <li>Pressione <code>Ctrl+Shift+M</code> (modo responsivo)</li>
+                    <li>Escolha "iPhone 12 Pro" ou similar</li>
+                    <li>Botões devem ficar 48x48px automaticamente</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>3️⃣ Log de Eventos</h2>
+            <div id="log">
+                <div class="log-entry">
+                    [00:00:00] Sistema iniciado - Aguardando interação...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('log');
+            const time = new Date().toLocaleTimeString('pt-BR');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${time}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateStatus(status, success = true) {
+            const statusEl = document.getElementById('desktopStatus');
+            statusEl.innerHTML = `<span class="status ${success ? 'success' : 'error'}">${status}</span>`;
+        }
+
+        // Teste botão Editar
+        const editBtn = document.getElementById('testEditBtn');
+        if (editBtn) {
+            addLog('✅ Botão EDITAR encontrado e configurado', 'info');
+            editBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🖱️ EDIT BUTTON CLICKED!');
+                addLog('🖱️ BOTÃO EDITAR CLICADO!', 'click');
+                updateStatus('Funcionando perfeitamente!', true);
+                alert('✅ BOTÃO EDITAR FUNCIONANDO!\n\nTamanho: 56x56px\nFonte: 20px');
+            });
+        } else {
+            addLog('❌ Botão EDITAR não encontrado!', 'error');
+        }
+
+        // Teste botão Excluir
+        const deleteBtn = document.getElementById('testDeleteBtn');
+        if (deleteBtn) {
+            addLog('✅ Botão EXCLUIR encontrado e configurado', 'info');
+            deleteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🖱️ DELETE BUTTON CLICKED!');
+                addLog('🖱️ BOTÃO EXCLUIR CLICADO!', 'click');
+                updateStatus('Funcionando perfeitamente!', true);
+                alert('✅ BOTÃO EXCLUIR FUNCIONANDO!\n\nTamanho: 56x56px\nFonte: 20px\nCor: Vermelho');
+            });
+        } else {
+            addLog('❌ Botão EXCLUIR não encontrado!', 'error');
+        }
+
+        // Log inicial
+        setTimeout(() => {
+            addLog(`📏 Tamanho do botão EDITAR: ${editBtn.offsetWidth}x${editBtn.offsetHeight}px`, 'info');
+            addLog(`📏 Tamanho do botão EXCLUIR: ${deleteBtn.offsetWidth}x${deleteBtn.offsetHeight}px`, 'info');
+            addLog('✅ Sistema pronto para testes!', 'info');
+        }, 100);
+
+        // Detectar mobile
+        if (window.innerWidth <= 768) {
+            addLog('📱 Modo MOBILE detectado - Botões ajustados para 48x48px', 'info');
+        } else {
+            addLog('🖥️ Modo DESKTOP detectado - Botões configurados em 56x56px', 'info');
+        }
+    </script>
+</body>
+</html>

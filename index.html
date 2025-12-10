@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPER FLOW - Sistema de Gerenciamento de Tarefas</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-tasks"></i>
+                <div class="logo-text">
+                    <h1>SUPER FLOW</h1>
+                    <span class="developer-credit">DOUGLAS JEKINSKY</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="board-selector-wrapper">
+                <select id="boardSelect" class="board-selector">
+                    <option value="">Carregando boards...</option>
+                </select>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="user-info" id="userInfo">
+                <i class="fas fa-user-circle"></i>
+                <span id="userName">Carregando...</span>
+            </span>
+            <button class="btn-icon" id="exportBtn" title="Exportar dados">
+                <i class="fas fa-file-download"></i>
+            </button>
+            <button class="btn-icon" id="importBtn" title="Importar dados">
+                <i class="fas fa-file-import"></i>
+            </button>
+            <button class="btn-icon" id="addBoardBtn" title="Adicionar Board">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="btn-icon" id="changePasswordBtn" title="Alterar Senha">
+                <i class="fas fa-key"></i>
+            </button>
+            <button class="btn-icon" id="logoutBtn" title="Sair" style="background: #ef4444; border-color: #ef4444;">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="board-header">
+            <div class="board-info">
+                <div class="board-title-row">
+                    <div class="board-title-group">
+                        <h2 id="boardTitle">Carregando...</h2>
+                        <p id="boardDescription"></p>
+                    </div>
+                    <div class="board-buttons">
+                        <button class="btn-board-rect" id="editBoardBtn">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn-board-rect btn-danger" id="deleteBoardBtn">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="board-actions">
+                <div class="search-box-board">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar por nome, matrícula ou posto..." class="search-input">
+                    <button class="btn-clear-search" id="clearSearchBtn" style="display: none;" title="Limpar busca">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-results-count" id="searchResultsCount" style="display: none;"></div>
+                <button class="btn-primary" id="addListBtn">
+                    <i class="fas fa-plus"></i> Adicionar Lista
+                </button>
+            </div>
+        </div>
+
+        <div class="board-container" id="boardContainer">
+            <!-- Lists will be dynamically added here -->
+        </div>
+
+        <!-- Seção de Histórico -->
+        <div class="history-section">
+            <div class="history-header">
+                <h3>
+                    <i class="fas fa-history"></i>
+                    Histórico de Movimentações e Alterações
+                </h3>
+                <div class="history-filters">
+                    <button class="filter-btn active" data-filter="all">Todos</button>
+                    <button class="filter-btn" data-filter="moved">Movidos</button>
+                    <button class="filter-btn" data-filter="edited">Editados</button>
+                    <button class="filter-btn" data-filter="status">Status</button>
+                </div>
+            </div>
+            <div class="history-timeline" id="historyTimeline">
+                <div class="history-empty">
+                    <i class="fas fa-clock"></i>
+                    <p>Nenhuma movimentação registrada ainda.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Add/Edit Board -->
+    <div class="modal" id="boardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="boardModalTitle">Novo Board</h3>
+                <button class="btn-close" onclick="closeModal('boardModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome do Board</label>
+                    <input type="text" id="boardName" placeholder="Ex: Projeto X" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="boardDesc" placeholder="Descrição do board..." class="form-input" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Cor do Tema</label>
+                    <div class="color-picker">
+                        <input type="color" id="boardColor" value="#10b981" class="color-input">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('boardModal')">Cancelar</button>
+                <button class="btn-primary" id="saveBoardBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit List -->
+    <div class="modal" id="listModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="listModalTitle">Nova Lista</h3>
+                <button class="btn-close" onclick="closeModal('listModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome da Lista / Equipe *</label>
+                    <input type="text" id="listName" placeholder="Ex: 🐯 TIGRE" class="form-input">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CCU</label>
+                        <input type="text" id="listCCU" placeholder="Ex: 2564" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Número do Posto</label>
+                        <input type="text" id="listNumeroPosto" placeholder="Ex: 400 0004590001001" class="form-input">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('listModal')">Cancelar</button>
+                <button class="btn-primary" id="saveListBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Card -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="cardModalTitle">Novo Vigilante</h3>
+                <button class="btn-close" onclick="closeModal('cardModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Matrícula *</label>
+                        <input type="text" id="cardMatricula" placeholder="Ex: 12345" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Vigilante *</label>
+                        <input type="text" id="cardNome" placeholder="Ex: João Silva Santos" class="form-input">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="tel" id="cardTelefone" placeholder="Ex: (47) 99999-9999" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Função *</label>
+                        <select id="cardFuncao" class="form-input">
+                            <option value="Vigilante">Vigilante</option>
+                            <option value="Supervisor">Supervisor</option>
+                            <option value="Líder de Equipe">Líder de Equipe</option>
+                            <option value="Vigilante Patrimonial">Vigilante Patrimonial</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data de Admissão *</label>
+                        <input type="date" id="cardDataAdmissao" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select id="cardStatus" class="form-input">
+                            <option value="EM_SERVICO">Em Serviço</option>
+                            <option value="LIVRE">Livre</option>
+                            <option value="FERIAS">Férias</option>
+                            <option value="AFASTADO">Afastado</option>
+                            <option value="DEMITIDO">Demitido</option>
+                            <option value="EM_ADMISSAO">Em Admissão</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Escala</label>
+                        <input type="text" id="cardEscala" placeholder="Ex: 12x36, 6x1, Diurno" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Horário</label>
+                        <input type="text" id="cardHorario" placeholder="Ex: 07:00 às 19:00" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea id="cardDesc" placeholder="Treinamentos, certificações, observações gerais..." class="form-input" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Checklists Personalizados</label>
+                    <div id="checklistsContainer">
+                        <button type="button" class="btn-secondary" onclick="addChecklistField()">
+                            <i class="fas fa-plus"></i> Adicionar Checklist
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Ações Especiais (só aparece ao editar) -->
+                <div id="cardActionsSection" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border-color);">
+                    <h4 style="margin-bottom: 12px; color: var(--text-primary);">Ações do Card</h4>
+                    <div class="form-group">
+                        <label>Mover Card Para</label>
+                        <select id="moveCardToList" class="form-input">
+                            <option value="">Selecione um posto...</option>
+                        </select>
+                        <button type="button" class="btn-secondary" onclick="moveCardTo()" style="margin-top: 8px; width: 100%;">
+                            <i class="fas fa-arrow-right"></i> Mover Para Este Posto
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('cardModal')">Cancelar</button>
+                <button class="btn-primary" id="saveCardBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Export Data -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Exportar Dados</h3>
+                <button class="btn-close" onclick="closeModal('exportModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option" style="grid-column: span 2;">
+                        <h4><i class="fas fa-file-excel"></i> Exportar para Excel (.XLSX)</h4>
+                        <p style="color: var(--primary); font-weight: 600;">⭐ RECOMENDADO - Planilha Excel profissional formatada e organizada</p>
+                        <button class="btn-primary" id="exportExcelBtn" style="font-size: 18px; padding: 15px 30px;">
+                            <i class="fas fa-download"></i> Baixar Excel (.XLSX)
+                        </button>
+                    </div>
+                    <div class="export-option">
+                        <h4><i class="fas fa-table"></i> Modelo de Importação Excel</h4>
+                        <p>Baixe o modelo Excel formatado para importar vigilantes</p>
+                        <button class="btn-primary" id="downloadExcelTemplateBtn">
+                            <i class="fas fa-download"></i> Baixar Modelo XLSX
+                        </button>
+                    </div>
+                    <div class="export-option">
+                        <h4><i class="fas fa-history"></i> Exportar Histórico</h4>
+                        <p>Exporta movimentações em Excel formatado</p>
+                        <button class="btn-primary" id="exportHistoryExcelBtn">
+                            <i class="fas fa-download"></i> Baixar Histórico XLSX
+                        </button>
+                    </div>
+                    <div class="export-option">
+                        <h4><i class="fas fa-file-code"></i> Backup JSON</h4>
+                        <p>Backup completo da estrutura em JSON</p>
+                        <button class="btn-secondary" id="exportJsonBtn">
+                            <i class="fas fa-download"></i> Baixar JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Import Data -->
+    <div class="modal" id="importModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Importar Dados</h3>
+                <button class="btn-close" onclick="closeModal('importModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="import-options">
+                    <div class="import-option">
+                        <h4><i class="fas fa-file-excel"></i> Importar Excel (.XLSX)</h4>
+                        <p style="color: var(--primary); font-weight: 600;">⭐ RECOMENDADO - Importe planilhas Excel</p>
+                        <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="file-input">
+                        <button class="btn-primary" id="importExcelBtn">
+                            <i class="fas fa-upload"></i> Importar Excel
+                        </button>
+                    </div>
+                    <div class="import-option">
+                        <h4><i class="fas fa-file-csv"></i> Importar CSV</h4>
+                        <p>Importe arquivos CSV (texto)</p>
+                        <input type="file" id="csvFileInput" accept=".csv" class="file-input">
+                        <button class="btn-primary" id="importCsvBtn">
+                            <i class="fas fa-upload"></i> Importar CSV
+                        </button>
+                    </div>
+                    <div class="import-option">
+                        <h4><i class="fas fa-file-code"></i> Importar JSON</h4>
+                        <p>Importe backup JSON do sistema</p>
+                        <input type="file" id="jsonFileInput" accept=".json,.txt" class="file-input">
+                        <button class="btn-primary" id="importJsonBtn">
+                            <i class="fas fa-upload"></i> Importar JSON
+                        </button>
+                    </div>
+                </div>
+                <div class="import-status" id="importStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Change Password -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-key"></i>
+                    Alterar Senha
+                </h2>
+                <button class="btn-close" onclick="closeModal('changePasswordModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="currentPassword">
+                            <i class="fas fa-lock"></i>
+                            Senha Atual *
+                        </label>
+                        <input 
+                            type="password" 
+                            id="currentPassword" 
+                            class="form-input" 
+                            required
+                            placeholder="Digite sua senha atual"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword">
+                            <i class="fas fa-key"></i>
+                            Nova Senha *
+                        </label>
+                        <input 
+                            type="password" 
+                            id="newPassword" 
+                            class="form-input" 
+                            required
+                            minlength="6"
+                            placeholder="Mínimo 6 caracteres"
+                        >
+                        <small class="form-help">A senha deve ter no mínimo 6 caracteres</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            <i class="fas fa-check-circle"></i>
+                            Confirmar Nova Senha *
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            class="form-input" 
+                            required
+                            minlength="6"
+                            placeholder="Digite a senha novamente"
+                        >
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('changePasswordModal')">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary" id="savePasswordBtn">
+                            <i class="fas fa-save"></i>
+                            Alterar Senha
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <!-- SheetJS Library para Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

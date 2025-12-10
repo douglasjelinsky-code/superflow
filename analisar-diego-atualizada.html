@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise: DIEGO (1).xlsx ATUALIZADA</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            background: #eef1ff;
+            border-color: #764ba2;
+        }
+        
+        .upload-area input {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .section {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover {
+            background: #f0f4ff;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            transition: width 0.3s;
+        }
+        
+        .data-preview {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #0c5460;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #155724;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .column-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .column-name {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .column-info {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 ANÁLISE: DIEGO (1).xlsx ATUALIZADA</h1>
+        <p class="subtitle">Analisando a estrutura da planilha atualizada</p>
+        
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📂</div>
+            <h3>Clique aqui para selecionar o arquivo DIEGO (1).xlsx</h3>
+            <p style="color: #666; margin-top: 10px;">Ou arraste e solte o arquivo aqui</p>
+            <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="analyzeFile()">
+        </div>
+        
+        <div id="results" class="hidden">
+            <!-- Informações Gerais -->
+            <div class="section">
+                <h2>📋 Informações Gerais</h2>
+                <div id="generalInfo"></div>
+            </div>
+            
+            <!-- Estrutura das Abas -->
+            <div class="section">
+                <h2>📑 Estrutura das Abas</h2>
+                <div id="sheetsInfo"></div>
+            </div>
+            
+            <!-- Estrutura das Colunas -->
+            <div class="section">
+                <h2>🔍 Estrutura das Colunas (Detalhada)</h2>
+                <div id="columnsInfo"></div>
+            </div>
+            
+            <!-- Preview dos Dados -->
+            <div class="section">
+                <h2>👁️ Preview dos Dados (Primeiras 5 Linhas)</h2>
+                <div id="dataPreview" class="data-preview"></div>
+            </div>
+            
+            <!-- Análise Completa (JSON) -->
+            <div class="section">
+                <h2>💻 Análise Completa (JSON)</h2>
+                <button class="copy-btn" onclick="copyAnalysis()">📋 Copiar Análise Completa</button>
+                <pre id="jsonAnalysis"></pre>
+            </div>
+            
+            <!-- Botões de Ação -->
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-success" onclick="copyAnalysis()">📋 Copiar Análise</button>
+                <button class="btn btn-warning" onclick="location.reload()">🔄 Analisar Outro Arquivo</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let fullAnalysis = null;
+        
+        // Drag and drop
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#eef1ff';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.background = '#f8f9ff';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#f8f9ff';
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                analyzeFile();
+            }
+        });
+        
+        function analyzeFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('❌ Nenhum arquivo selecionado!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Análise completa
+                    fullAnalysis = analyzeWorkbook(workbook);
+                    
+                    // Exibir resultados
+                    displayResults(fullAnalysis);
+                    
+                } catch (error) {
+                    alert('❌ Erro ao ler arquivo: ' + error.message);
+                    console.error(error);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+        
+        function analyzeWorkbook(workbook) {
+            const analysis = {
+                fileName: document.getElementById('fileInput').files[0].name,
+                analyzedAt: new Date().toLocaleString('pt-BR'),
+                totalSheets: workbook.SheetNames.length,
+                sheets: []
+            };
+            
+            // Analisar cada aba
+            workbook.SheetNames.forEach((sheetName, index) => {
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                const sheetAnalysis = {
+                    name: sheetName,
+                    index: index + 1,
+                    totalRows: jsonData.length,
+                    totalDataRows: jsonData.length - 1, // Excluir cabeçalho
+                    columns: []
+                };
+                
+                // Analisar colunas
+                if (jsonData.length > 0) {
+                    const headers = jsonData[0];
+                    
+                    headers.forEach((header, colIndex) => {
+                        const columnData = jsonData.slice(1).map(row => row[colIndex]);
+                        const filledCount = columnData.filter(val => val !== undefined && val !== null && val !== '').length;
+                        const emptyCount = columnData.length - filledCount;
+                        const fillRate = columnData.length > 0 ? ((filledCount / columnData.length) * 100).toFixed(1) : 0;
+                        
+                        // Detectar tipo de dados
+                        let dataType = 'mixed';
+                        const nonEmptyValues = columnData.filter(val => val !== undefined && val !== null && val !== '');
+                        if (nonEmptyValues.length > 0) {
+                            const allNumbers = nonEmptyValues.every(val => !isNaN(val));
+                            const allDates = nonEmptyValues.every(val => {
+                                if (typeof val === 'string') {
+                                    return /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(val);
+                                }
+                                return false;
+                            });
+                            
+                            if (allNumbers) dataType = 'number';
+                            else if (allDates) dataType = 'date';
+                            else dataType = 'text';
+                        }
+                        
+                        // Valores únicos (sample)
+                        const uniqueValues = [...new Set(nonEmptyValues)];
+                        const sampleValues = uniqueValues.slice(0, 5);
+                        
+                        sheetAnalysis.columns.push({
+                            index: colIndex + 1,
+                            name: header || `Coluna_${colIndex + 1}`,
+                            dataType: dataType,
+                            filled: filledCount,
+                            empty: emptyCount,
+                            fillRate: parseFloat(fillRate),
+                            uniqueValues: uniqueValues.length,
+                            sampleValues: sampleValues
+                        });
+                    });
+                    
+                    // Preview dos dados (5 primeiras linhas)
+                    sheetAnalysis.preview = jsonData.slice(0, 6);
+                }
+                
+                analysis.sheets.push(sheetAnalysis);
+            });
+            
+            return analysis;
+        }
+        
+        function displayResults(analysis) {
+            // Mostrar resultados
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Informações gerais
+            const generalInfo = `
+                <table>
+                    <tr>
+                        <th>📁 Nome do Arquivo</th>
+                        <td><strong>${analysis.fileName}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>📅 Data da Análise</th>
+                        <td>${analysis.analyzedAt}</td>
+                    </tr>
+                    <tr>
+                        <th>📊 Total de Abas</th>
+                        <td><span class="badge badge-info">${analysis.totalSheets} aba(s)</span></td>
+                    </tr>
+                </table>
+            `;
+            document.getElementById('generalInfo').innerHTML = generalInfo;
+            
+            // Informações das abas
+            let sheetsHTML = '';
+            analysis.sheets.forEach(sheet => {
+                sheetsHTML += `
+                    <div class="alert alert-info">
+                        <div>
+                            <strong>📑 Aba ${sheet.index}: "${sheet.name}"</strong><br>
+                            <span class="badge badge-success">${sheet.totalDataRows} linhas de dados</span>
+                            <span class="badge badge-info">${sheet.columns.length} colunas</span>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('sheetsInfo').innerHTML = sheetsHTML;
+            
+            // Informações das colunas
+            let columnsHTML = '';
+            analysis.sheets.forEach(sheet => {
+                columnsHTML += `<h3 style="color: #667eea; margin-top: 20px;">📑 Aba: ${sheet.name}</h3>`;
+                
+                sheet.columns.forEach(col => {
+                    const fillColor = col.fillRate === 100 ? 'success' : col.fillRate > 50 ? 'warning' : 'danger';
+                    
+                    columnsHTML += `
+                        <div class="column-card">
+                            <div class="column-name">${col.index}. ${col.name}</div>
+                            <div class="column-info">
+                                <div class="info-item">
+                                    <strong>Tipo:</strong> <span class="badge badge-${col.dataType === 'number' ? 'info' : col.dataType === 'date' ? 'warning' : 'success'}">${col.dataType}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Preenchimento:</strong> <span class="badge badge-${fillColor}">${col.fillRate}%</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Preenchidos:</strong> ${col.filled} / ${col.filled + col.empty}
+                                </div>
+                                <div class="info-item">
+                                    <strong>Valores únicos:</strong> ${col.uniqueValues}
+                                </div>
+                            </div>
+                            ${col.sampleValues.length > 0 ? `
+                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                                    <strong style="color: #666;">Exemplos:</strong> ${col.sampleValues.map(v => `<span class="badge badge-info">${v}</span>`).join(' ')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+            });
+            document.getElementById('columnsInfo').innerHTML = columnsHTML;
+            
+            // Preview dos dados
+            let previewHTML = '';
+            analysis.sheets.forEach(sheet => {
+                if (sheet.preview && sheet.preview.length > 0) {
+                    previewHTML += `<h3 style="color: #667eea; margin-bottom: 15px;">📑 Aba: ${sheet.name}</h3>`;
+                    previewHTML += '<table><tr>';
+                    
+                    // Cabeçalhos
+                    sheet.preview[0].forEach(header => {
+                        previewHTML += `<th>${header || 'Sem nome'}</th>`;
+                    });
+                    previewHTML += '</tr>';
+                    
+                    // Dados
+                    sheet.preview.slice(1).forEach(row => {
+                        previewHTML += '<tr>';
+                        row.forEach(cell => {
+                            previewHTML += `<td>${cell !== undefined && cell !== null ? cell : '<em style="color: #ccc;">vazio</em>'}</td>`;
+                        });
+                        previewHTML += '</tr>';
+                    });
+                    
+                    previewHTML += '</table>';
+                }
+            });
+            document.getElementById('dataPreview').innerHTML = previewHTML;
+            
+            // JSON completo
+            document.getElementById('jsonAnalysis').textContent = JSON.stringify(analysis, null, 2);
+            
+            // Scroll suave para resultados
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function copyAnalysis() {
+            const analysisText = JSON.stringify(fullAnalysis, null, 2);
+            
+            navigator.clipboard.writeText(analysisText).then(() => {
+                alert('✅ Análise copiada para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = analysisText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                alert('✅ Análise copiada!');
+            });
+        }
+    </script>
+</body>
+</html>

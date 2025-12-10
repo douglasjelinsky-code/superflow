@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Planilha Excel</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #0a0f1e;
+            color: #e5e7eb;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #1a1f35;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #10b981;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info {
+            background: #0f1729;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #10b981;
+        }
+
+        .info h2 {
+            color: #10b981;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .sheets {
+            margin-bottom: 20px;
+        }
+
+        .sheet-tab {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #0f1729;
+            border: 2px solid #2d3748;
+            border-radius: 6px;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sheet-tab:hover {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .sheet-tab.active {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            border: 2px solid #2d3748;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f1729;
+        }
+
+        thead {
+            background: #10b981;
+            position: sticky;
+            top: 0;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            border: 1px solid #059669;
+        }
+
+        td {
+            padding: 10px 12px;
+            border: 1px solid #2d3748;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #1a1f35;
+        }
+
+        .column-info {
+            background: #0f1729;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .column-info h3 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+
+        .column-item {
+            background: #1a1f35;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #10b981;
+        }
+
+        .column-item strong {
+            color: #10b981;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #0f1729;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #2d3748;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            color: #10b981;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Análise da Planilha Excel</h1>
+        
+        <div class="info">
+            <h2>Informações do Arquivo</h2>
+            <p id="fileInfo">Carregando...</p>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="sheets" id="sheetsContainer"></div>
+
+        <div class="table-container" id="tableContainer">
+            <p style="padding: 20px; text-align: center;">Selecione uma aba acima para visualizar os dados</p>
+        </div>
+
+        <div class="column-info" id="columnInfo"></div>
+    </div>
+
+    <script>
+        async function loadExcel() {
+            try {
+                const response = await fetch('planilha_modelo.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+                // Informações do arquivo
+                const sheetNames = workbook.SheetNames;
+                document.getElementById('fileInfo').innerHTML = `
+                    <strong>Número de abas:</strong> ${sheetNames.length}<br>
+                    <strong>Abas:</strong> ${sheetNames.join(', ')}
+                `;
+
+                // Estatísticas
+                let totalRows = 0;
+                let totalColumns = 0;
+                sheetNames.forEach(name => {
+                    const sheet = workbook.Sheets[name];
+                    const data = XLSX.utils.sheet_to_json(sheet);
+                    totalRows += data.length;
+                    if (data.length > 0) {
+                        totalColumns = Math.max(totalColumns, Object.keys(data[0]).length);
+                    }
+                });
+
+                document.getElementById('stats').innerHTML = `
+                    <div class="stat-card">
+                        <h4>Total de Abas</h4>
+                        <div class="value">${sheetNames.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total de Linhas</h4>
+                        <div class="value">${totalRows}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Colunas (máx)</h4>
+                        <div class="value">${totalColumns}</div>
+                    </div>
+                `;
+
+                // Criar abas
+                const sheetsHtml = sheetNames.map((name, index) => 
+                    `<div class="sheet-tab ${index === 0 ? 'active' : ''}" onclick="showSheet('${name}')">${name}</div>`
+                ).join('');
+                document.getElementById('sheetsContainer').innerHTML = sheetsHtml;
+
+                // Armazenar workbook globalmente
+                window.workbookData = workbook;
+
+                // Mostrar primeira aba
+                if (sheetNames.length > 0) {
+                    showSheet(sheetNames[0]);
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar Excel:', error);
+                document.getElementById('fileInfo').innerHTML = `<strong style="color: #ef4444;">Erro ao carregar arquivo: ${error.message}</strong>`;
+            }
+        }
+
+        function showSheet(sheetName) {
+            const workbook = window.workbookData;
+            if (!workbook) return;
+
+            // Atualizar abas ativas
+            document.querySelectorAll('.sheet-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent === sheetName) {
+                    tab.classList.add('active');
+                }
+            });
+
+            const sheet = workbook.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet);
+
+            if (data.length === 0) {
+                document.getElementById('tableContainer').innerHTML = '<p style="padding: 20px; text-align: center;">Esta aba está vazia</p>';
+                document.getElementById('columnInfo').innerHTML = '';
+                return;
+            }
+
+            // Criar tabela
+            const columns = Object.keys(data[0]);
+            let tableHtml = '<table><thead><tr>';
+            columns.forEach(col => {
+                tableHtml += `<th>${col}</th>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
+
+            // Mostrar até 100 linhas
+            data.slice(0, 100).forEach(row => {
+                tableHtml += '<tr>';
+                columns.forEach(col => {
+                    let value = row[col] || '';
+                    if (typeof value === 'string' && value.length > 50) {
+                        value = value.substring(0, 50) + '...';
+                    }
+                    tableHtml += `<td>${value}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+            
+            if (data.length > 100) {
+                tableHtml += `<p style="padding: 10px; text-align: center; color: #10b981;">Mostrando 100 de ${data.length} linhas</p>`;
+            }
+
+            document.getElementById('tableContainer').innerHTML = tableHtml;
+
+            // Informações das colunas
+            let columnInfoHtml = `<h3>📋 Estrutura das Colunas (${columns.length} colunas)</h3>`;
+            columns.forEach((col, index) => {
+                // Analisar tipo de dado
+                const sampleValues = data.slice(0, 5).map(row => row[col]).filter(v => v !== undefined && v !== null && v !== '');
+                const types = new Set(sampleValues.map(v => typeof v));
+                const typeStr = Array.from(types).join(', ');
+                
+                columnInfoHtml += `
+                    <div class="column-item">
+                        <strong>${index + 1}. ${col}</strong><br>
+                        Tipo: ${typeStr || 'vazio'}<br>
+                        Exemplo: ${sampleValues[0] || '(vazio)'}
+                    </div>
+                `;
+            });
+
+            document.getElementById('columnInfo').innerHTML = columnInfoHtml;
+        }
+
+        // Carregar ao iniciar
+        loadExcel();
+    </script>
+</body>
+</html>
